@@ -1,12 +1,12 @@
 # Oxford Flowers102 Classification
 
-使用 PyTorch 在 [Oxford Flowers102](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/) **全部 102 类**上完成 CNN 图像分类课程实验，沿用官方 train / val / test 划分。项目包含自行实现的 SimpleCNN 基线、使用 ImageNet 预训练权重进行迁移学习的 ResNet18、数据检查、训练、独立评估、指标 JSON、图表及 [实验结果报告](reports/experiment-results.md)。当前正式实验中，ResNet18 的 test top-1 accuracy 为 **86.94%**。
+使用 PyTorch 在 [Oxford Flowers102](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/) **全部 102 类**上完成 CNN 图像分类课程实验，沿用官方 train / val / test 划分，不使用 38 类子集。项目包含自行实现的 SimpleCNN 基线、使用 ImageNet 预训练权重进行迁移学习的 ResNet18 和 MobileNetV3-Small、官方划分数据的下载与检查、训练、独立评估、指标 JSON、图表及 [实验结果报告](reports/experiment-results.md)。当前正式实验中，ResNet18 的 test top-1 accuracy 为 **86.94%**；MobileNetV3-Small 尚无正式 Flowers102 训练或 test 结果。
 
 ## 数据与防泄漏约定
 
 数据由 [`torchvision.datasets.Flowers102`](https://docs.pytorch.org/vision/stable/generated/torchvision.datasets.Flowers102.html) 下载到项目 `data/`。严格使用 Oxford 官方 `setid.mat` 中的 `train`（1020 张）、`val`（1020 张）、`test`（6149 张），共 8189 张、102 类。`train` 更新模型参数；`val` 选择最佳 checkpoint 和判断是否提前停止；`test` 只在正式训练结束后评估。本次没有根据 test 结果调参。
 
-训练输入使用 `RandomResizedCrop(224, scale=(0.7, 1.0))`、水平翻转、10° 内随机旋转；验证和测试使用 `Resize(256)` 与 `CenterCrop(224)`。三者均使用 [ResNet18 官方 ImageNet 权重](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html)的 RGB 均值和标准差进行归一化。增强只用于训练集。
+训练输入使用 `RandomResizedCrop(224, scale=(0.7, 1.0))`、水平翻转、10° 内随机旋转；验证和测试使用 `Resize(256)` 与 `CenterCrop(224)`。三者均使用 [ResNet18 官方 ImageNet 权重](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html)的 RGB 均值和标准差进行归一化；[MobileNetV3-Small 官方权重](https://docs.pytorch.org/vision/0.28/models/generated/torchvision.models.mobilenet_v3_small.html)使用相同的归一化值及验证裁剪尺寸。增强只用于训练集。
 
 ## 项目结构
 
@@ -69,6 +69,15 @@ try {
 .\.venv\Scripts\python.exe scripts\train.py --model resnet18 --smoke-test --batch-size 32 --workers 0
 .\.venv\Scripts\python.exe scripts\evaluate.py --model resnet18 --split val --smoke-test --batch-size 32 --workers 0
 ```
+
+MobileNetV3-Small 使用 `MobileNet_V3_Small_Weights.IMAGENET1K_V1`，仅将最后分类层替换为 102 类输出，通过同一训练与评估流程运行。默认最大 15 个 epoch、初始学习率 `1e-4`；先用少量 batch 检查新模型：
+
+```powershell
+.\.venv\Scripts\python.exe scripts\train.py --model mobilenetv3-small --smoke-test --batch-size 2 --workers 0
+.\.venv\Scripts\python.exe scripts\evaluate.py --model mobilenetv3-small --split val --smoke-test --batch-size 2 --workers 0
+```
+
+下方正式训练命令和结果表记录的是原有两个模型；MobileNetV3-Small 尚无正式 Flowers102 训练或 test 结果。
 
 本次正式实验运行的训练命令如下。两种模型都使用 seed 42、AdamW、weight decay 0.01、训练期 label smoothing 0.1、CosineAnnealingLR、CUDA AMP（若可用）、val top-1 模型选择及 patience 6。ResNet18 直接全网络微调，没有额外冻结阶段；学习率较低。train loss 含 label smoothing，val loss 不含，因此两条曲线适合分别观察趋势，数值不宜直接等同比较。
 

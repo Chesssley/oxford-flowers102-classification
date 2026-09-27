@@ -1,14 +1,20 @@
-"""The course CNN baseline and ImageNet-pretrained ResNet18."""
+"""The course CNN baseline and ImageNet-pretrained transfer models."""
 
 from __future__ import annotations
 
 import torch
 from torch import nn
-from torchvision.models import ResNet18_Weights, resnet18
+from torchvision.models import (
+    MobileNet_V3_Small_Weights,
+    ResNet18_Weights,
+    mobilenet_v3_small,
+    resnet18,
+)
 
 from .data import CLASS_COUNT
 
-MODEL_NAMES = ("simple-cnn", "resnet18")
+MODEL_NAMES = ("simple-cnn", "resnet18", "mobilenetv3-small")
+PRETRAINED_MODEL_NAMES = ("resnet18", "mobilenetv3-small")
 
 
 class SimpleCNN(nn.Module):
@@ -48,6 +54,11 @@ def build_model(name: str, *, pretrained: bool = False) -> nn.Module:
         weights = ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
         model = resnet18(weights=weights)
         model.fc = nn.Linear(model.fc.in_features, CLASS_COUNT)
+        return model
+    if name == "mobilenetv3-small":
+        weights = MobileNet_V3_Small_Weights.IMAGENET1K_V1 if pretrained else None
+        model = mobilenet_v3_small(weights=weights)
+        model.classifier[-1] = nn.Linear(model.classifier[-1].in_features, CLASS_COUNT)
         return model
     raise ValueError(f"Unknown model {name!r}; choose from {MODEL_NAMES}")
 

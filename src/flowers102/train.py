@@ -12,7 +12,7 @@ from torch import nn
 
 from .data import get_dataset, make_loader
 from .engine import run_epoch
-from .models import build_model, parameter_counts
+from .models import PRETRAINED_MODEL_NAMES, build_model, parameter_counts
 from .utils import OUTPUT_DIR, environment_info, save_json, set_seed
 
 
@@ -44,7 +44,7 @@ def train_experiment(config: TrainConfig) -> dict[str, Any]:
     val_loader = make_loader(
         val_data, batch_size=config.batch_size, workers=config.workers, shuffle=False, seed=config.seed
     )
-    model = build_model(config.model, pretrained=config.model == "resnet18").to(device)
+    model = build_model(config.model, pretrained=config.model in PRETRAINED_MODEL_NAMES).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=config.learning_rate, weight_decay=config.weight_decay
     )
@@ -73,11 +73,11 @@ def train_experiment(config: TrainConfig) -> dict[str, Any]:
     for epoch in range(1, epoch_count + 1):
         train_stats = run_epoch(
             model, train_loader, training_loss, device,
-            optimizer=optimizer, scaler=scaler, top5=config.model == "resnet18", max_batches=max_batches,
+            optimizer=optimizer, scaler=scaler, top5=config.model in PRETRAINED_MODEL_NAMES, max_batches=max_batches,
         )
         val_stats = run_epoch(
             model, val_loader, evaluation_loss, device,
-            top5=config.model == "resnet18", max_batches=max_batches,
+            top5=config.model in PRETRAINED_MODEL_NAMES, max_batches=max_batches,
         )
         row = {
             "epoch": epoch,
