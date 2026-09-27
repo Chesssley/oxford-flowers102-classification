@@ -1,0 +1,8 @@
+# Windows x64 / Python 3.12. CUDA wheels come from the official PyTorch index.
+--index-url https://pypi.org/simple
+--extra-index-url https://download.pytorch.org/whl/cu130
+torch==2.13.0+cu130
+torchvision==0.28.0+cu130
+scipy==1.18.1
+numpy==2.5.2
+matplotlib==3.11.2

@@ -1,0 +1,27 @@
+# Project environment and Python byproducts
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Editor and local settings
+.idea/
+.vscode/
+*.swp
+
+# Downloaded data and generated experiment artifacts
+data/
+outputs/
+*.log
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# Windows
+Thumbs.db
+Desktop.ini
+.DS_Store
