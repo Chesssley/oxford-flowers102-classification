@@ -14,7 +14,7 @@ from torchvision.datasets import Flowers102
 
 from .data import CLASS_COUNT, get_dataset, make_loader
 from .engine import run_epoch
-from .models import build_model, parameter_counts
+from .models import PRETRAINED_MODEL_NAMES, build_model, parameter_counts
 from .utils import DATA_DIR, OUTPUT_DIR, environment_info, save_json
 
 
@@ -63,7 +63,7 @@ def evaluate_checkpoint(
     started = time.perf_counter()
     stats = run_epoch(
         model, loader, nn.CrossEntropyLoss(), device,
-        top5=model_name == "resnet18", collect_predictions=True,
+        top5=model_name in PRETRAINED_MODEL_NAMES, collect_predictions=True,
         max_batches=2 if smoke_test else None,
     )
     targets = stats["targets"]

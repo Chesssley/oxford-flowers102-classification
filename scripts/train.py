@@ -1,4 +1,4 @@
-"""Train SimpleCNN or ResNet18 on official Flowers102 train/val splits."""
+"""Train a supported model on official Flowers102 train/val splits."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from flowers102.utils import configure_project_caches
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", choices=("simple-cnn", "resnet18"), required=True)
+    parser.add_argument("--model", choices=("simple-cnn", "resnet18", "mobilenetv3-small"), required=True)
     parser.add_argument("--epochs", type=int)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--workers", type=int, default=2)
@@ -24,7 +24,7 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--smoke-test", action="store_true")
     args = parser.parse_args()
-    defaults = {"simple-cnn": (20, 1e-3), "resnet18": (15, 1e-4)}
+    defaults = {"simple-cnn": (20, 1e-3), "resnet18": (15, 1e-4), "mobilenetv3-small": (15, 1e-4)}
     default_epochs, default_lr = defaults[args.model]
     epochs = default_epochs if args.epochs is None else args.epochs
     learning_rate = default_lr if args.learning_rate is None else args.learning_rate

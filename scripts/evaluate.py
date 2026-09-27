@@ -13,7 +13,7 @@ from flowers102.utils import configure_project_caches
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", choices=("simple-cnn", "resnet18"), required=True)
+    parser.add_argument("--model", choices=("simple-cnn", "resnet18", "mobilenetv3-small"), required=True)
     parser.add_argument("--split", choices=("val", "test"), required=True)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--workers", type=int, default=2)
