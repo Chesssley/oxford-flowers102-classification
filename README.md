@@ -1,6 +1,6 @@
 # Oxford Flowers102 Classification
 
-使用 PyTorch 在 [Oxford Flowers102](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/) **全部 102 类**上完成 CNN 图像分类课程实验。项目包含自行实现的 SimpleCNN 基线、使用 ImageNet 预训练权重的 ResNet18、官方划分数据的下载与检查、训练、独立评估、指标 JSON、图表及 [实验结果报告](reports/experiment-results.md)。不使用 38 类子集。
+使用 PyTorch 在 [Oxford Flowers102](https://www.robots.ox.ac.uk/~vgg/data/flowers/102/) **全部 102 类**上完成 CNN 图像分类课程实验，沿用官方 train / val / test 划分。项目包含自行实现的 SimpleCNN 基线、使用 ImageNet 预训练权重进行迁移学习的 ResNet18、数据检查、训练、独立评估、指标 JSON、图表及 [实验结果报告](reports/experiment-results.md)。当前正式实验中，ResNet18 的 test top-1 accuracy 为 **86.94%**。
 
 ## 数据与防泄漏约定
 
